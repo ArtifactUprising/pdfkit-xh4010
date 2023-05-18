@@ -9,3 +9,5 @@ coverage
 package-lock.json
 /examples/browserify/bundle.js
 .idea
+releases
+package

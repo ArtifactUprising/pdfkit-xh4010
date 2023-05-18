@@ -1,7 +1,19 @@
-# This is a fork of a fork that contains new functionality for `pdfkit`. Forking here so we can have concise release with only the necessary JS files
+# What is this package?
+This is a fork of a fork that contains new functionality for `pdfkit`. Forking here so we can have concise release with only the necessary JS files
+
 - PR here https://github.com/foliojs/pdfkit/pull/1437
 - Fork here https://github.com/xh4010/pdfkit
-- Current tag - 0.13.0-xh4010-20230518
+- Current tag - v0.13.0-xh4010-20230518-02
+
+### Building a release
+1. Change the version number in the `package.json`
+2. Run `yarn pack`, this will create a `.tgz` file with the package
+3. Move the `.tgz` file to `./releases/`
+3. Go to the "create a release" page in https://github.com/ArtifactUprising/pdfkit-xh4010
+4. Upload the `.tgz` file to the release, create a new tag on publish with the version, point to branch if applicable
+5. Create the release
+6. Copy the `.tgz` file URL, this is public
+7. Add to another repo's `package.json` like this: `"pdfkit": "https://github.com/ArtifactUprising/pdfkit-xh4010/releases/download/v0.13.0-xh4010-20230518-02/pdfkit-v0.13.0-xh4010-20230518-02.tgz"`
 
 # PDFKit
 

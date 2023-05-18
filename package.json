@@ -9,13 +9,14 @@
     "document",
     "vector"
   ],
-  "version": "0.13.0",
+  "version": "v0.13.0-xh4010-20230518-02",
   "homepage": "http://pdfkit.org/",
   "author": {
     "name": "Devon Govett",
     "email": "devongovett@gmail.com",
     "url": "http://badassjs.com/"
   },
+  "files": ["js"],
   "license": "MIT",
   "repository": {
     "type": "git",
