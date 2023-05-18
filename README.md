@@ -1,7 +1,7 @@
 # This is a fork of a fork that contains new functionality for `pdfkit`. Forking here so we can have concise release with only the necessary JS files
-PR here https://github.com/foliojs/pdfkit/pull/1437
-Fork here https://github.com/xh4010/pdfkit
-Current tag - 0.13.0-xh4010-20230518
+- PR here https://github.com/foliojs/pdfkit/pull/1437
+- Fork here https://github.com/xh4010/pdfkit
+- Current tag - 0.13.0-xh4010-20230518
 
 # PDFKit
 
