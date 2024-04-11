@@ -4327,7 +4327,7 @@ class ICCProfile {
     var pos = 2;
     var buffers = [];
 
-    while (pos < jpeg.length) {
+    while (pos < jpeg.length - 4) {
       var marker = jpeg.readUInt16BE(pos);
       var length = jpeg.readUInt16BE(pos + 2);
 
