@@ -4331,7 +4331,7 @@ class ICCProfile {
       var marker = jpeg.readUInt16BE(pos);
       var length = jpeg.readUInt16BE(pos + 2);
 
-      if (marker === 0xFFE2) {
+      if (marker === 0xffe2) {
         var signature = jpeg.toString('ascii', pos + 4, pos + 18);
 
         if (signature.startsWith('ICC_PROFILE')) {
@@ -4345,23 +4345,59 @@ class ICCProfile {
 
     if (buffers.length == 0) return;
     return Buffer.concat(buffers);
-  }
+  } // A PNG file is composed of an 8-byte PNG signature followed by a sequence of well-structured chunks.
+  // PNG chunks are laid out like so:
+  // [ Length (4 bytes) | Type (4 bytes) | Data (length bytes) | CRC (4 bytes) ]
+  // And the data in the iCCP chunk is laid out like so:
+  // [ Profile name (1-79 bytes) | Null terminator (1 byte) | Compression method (1 byte) | Compressed profile (n bytes)]
+  // References:
+  // - https://www.w3.org/TR/2003/REC-PNG-20031110/#5PNG-file-signature
+  // - http://www.libpng.org/pub/png/spec/1.2/PNG-Chunks.html#C.iCCP
 
-  static extractFromPNG(png) {
-    var pos = png.indexOf('iCCP');
 
-    if (pos === -1) {
-      console.log('No iCCP chunk found');
-      return;
+  static extractFromPNG(pngBuffer) {
+    var offset = 8; // Skip PNG signature
+
+    while (offset < pngBuffer.length) {
+      var chunkLength = pngBuffer.readUInt32BE(offset);
+      var chunkType = pngBuffer.slice(offset + 4, offset + 8).toString('ascii');
+
+      if (chunkType === 'IEND') {
+        break; // End of PNG file
+      }
+
+      if (chunkType === 'iCCP') {
+        var dataStart = offset + 8;
+        var dataEnd = dataStart + chunkLength;
+        var data = pngBuffer.slice(dataStart, dataEnd); // Find null separator and compression method
+
+        var nullPos = data.indexOf(0);
+
+        if (nullPos === -1 || nullPos === data.length - 1) {
+          throw new Error('Invalid iCCP chunk format');
+        } // const profileName = data.slice(0, nullPos).toString('ascii');
+
+
+        var compressionMethod = data[nullPos + 1];
+
+        if (compressionMethod !== 0) {
+          throw new Error('Unsupported compression method');
+        }
+
+        var compressedProfile = data.slice(nullPos + 2);
+
+        try {
+          var iccProfile = zlib.inflateSync(compressedProfile);
+          return iccProfile;
+        } catch (error) {
+          throw new Error('Failed to decompress ICC profile: ' + error.message);
+        }
+      }
+
+      offset += chunkLength + 12; // Length + Type + Data + CRC
     }
 
-    var length = png.readUInt32BE(pos - 4);
-    var data = png.slice(pos + 8, pos + length + 8);
-    var nullPos = data.indexOf('\x00');
-    var buffer = zlib.inflateSync(data.slice(nullPos + 2), {
-      windowBits: 15
-    });
-    return buffer;
+    console.log('No iCCP chunk found');
   }
 
   constructor(buffer) {
